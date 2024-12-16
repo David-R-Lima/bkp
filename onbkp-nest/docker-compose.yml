@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # app:
+  #   container_name: onbkp_nest
+  #   build: .
+  #   ports:
+  #     - 1336:3333
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - ONBKP_NEST
+
+  # app_dev:
+  #   container_name: onbkp_nest_dev
+  #   build: .
+  #   ports:
+  #     - 1335:3333
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - ONBKP_NEST
+
+  # redis:
+  #   container_name: onbkp_nest-redis
+  #   env_file: .env
+  #   restart: always
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile-redis
+  #   ports:
+  #     - '6382:6379'
+  #   environment:
+  #     - ALLOW_EMPTY_PASSWORD=yes
+  #     - REDIS_SAVE=900:1,300:10,60:10000
+  #   networks:
+  #     - ONBKP_NEST
+
+  redis_dev:
+    container_name: onbkp_nest-redis-dev
+    env_file: .env
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile-redis
+    ports:
+      - '6379:6379'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_SAVE=900:1,300:10,60:10000
+    networks:
+      - bridge
+  # redis_commander:
+  #   image: rediscommander/redis-commander
+  #   container_name: onbkp_nest-redis_commander
+  #   restart: always
+  #   environment:
+  #     - REDIS_HOSTS=ms-pagamento-redis-dev:redis:6379
+  #   ports:
+  #   - 8081:8081
+  #   networks:
+  #     - ONBKP_NEST   
+
+  # postgres:
+  #   container_name: onbkp_nest-pg
+  #   image: postgres
+  #   ports:
+  #     - 5460:5432
+  #   environment:
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: dwpq2jnza4
+  #   volumes:
+  #     - ./data/pg:/data/postgres
+  #   networks:
+  #     - ONBKP_NEST
+
+networks:
+  ONBKP_NEST:
+    driver: bridge

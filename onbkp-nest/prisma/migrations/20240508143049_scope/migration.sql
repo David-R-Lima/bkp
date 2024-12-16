@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "BANCO_DADOS" ADD COLUMN     "TX_SCP" TEXT;

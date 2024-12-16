@@ -1,0 +1,13 @@
+# 1. Escolha sua imagem base
+FROM redis:latest
+
+# 2. Defina seu diretório de trabalho no contêiner
+WORKDIR /usr/local/etc/redis
+
+# 3. Crie o arquivo redis.conf com as configurações de save desejadas utilizando comandos de shell 
+RUN echo 'save 900 1' > redis.conf \
+    && echo 'save 300 10' >> redis.conf \
+    && echo 'save 60 10000' >> redis.conf
+
+# 4. Especifique o comando para executar na inicialização do contêiner
+CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]

@@ -1,0 +1,191 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  A
+  U
+}
+
+enum NotificationType {
+  EB // erro no backup
+  ES // erro interno ao salvar backup
+  SB //sucesso backup
+}
+
+model PARAMETROS {
+  CD_PAR         Int       @id @default(autoincrement())
+  TP_PAR         String?   @db.VarChar(32)
+  NM_PAR         String?   @db.VarChar(32)
+  DS_PAR         String?   @db.VarChar(100)
+  STR_01         String?   @db.VarChar(1)
+  STR_02         String?   @db.VarChar(2)
+  STR_03         String?   @db.VarChar(3)
+  STR_05         String?   @db.VarChar(4)
+  STR_10         String?   @db.VarChar(10)
+  STR_20         String?   @db.VarChar(20)
+  STR_32         String?   @db.VarChar(32)
+  STR_50         String?   @db.VarChar(50)
+  STR_100        String?   @db.VarChar(100)
+  STR_200        String?   @db.VarChar(200)
+  STR_255        String?   @db.VarChar(255)
+  STR_1000       String?   @db.VarChar(1000)
+  STR_2000       String?   @db.VarChar(2000)
+  TELEFONE       String?   @db.VarChar(15)
+  CODIGO         Int?
+  COD_CURTO      Int?      @db.SmallInt
+  DATA           DateTime? @db.Date
+  NOME           String?   @db.VarChar(50)
+  NOME_GRANDE    String?   @db.VarChar(100)
+  DINHEIRO       Decimal?  @db.Decimal(18, 2)
+  QUANTIDADE     Float?    @db.DoublePrecision
+  VALOR_UNITARIO Float?    @db.DoublePrecision
+  LOGICO         String?   @db.VarChar(1)
+  INTEIRO        Int?
+  DH_CAD         DateTime?
+}
+
+model user {
+  id_user       String    @id @map("CD_USU") @db.VarChar(100)
+  name          String?   @map("NM_USU") @db.VarChar(100)
+  password      String?   @map("TX_SNH") @db.VarChar(100)
+  email         String?   @map("TX_EML") @db.VarChar(100)
+  recovery_code Int?      @map("CD_TRC_SNH")
+  status        Boolean?  @map("TF_ATV")
+  created_at    DateTime? @map("DH_CAD") @db.Timestamp()
+  user_type     UserType?   @map("TP_USU")
+  session_id         String?   @map("TX_TKN")
+  login_code    Int? @map("CD_LGN")
+  //FK
+
+  BD         database[]
+  BD_AVISOS  database_notification[]
+  BD_ROTINAS database_routines[]
+
+  @@map("USUARIOS")
+}
+
+model project {
+  id_project   String     @id @map("CD_PRO")
+  id_user      String     @map("CD_USU")
+  project_name String     @map("TX_PRO")
+  
+  database     database[]
+}
+
+model database {
+  id_database          String    @id @map("CD_BAN") @db.VarChar(100)
+  id_user              String    @map("CD_USU")
+  database_description String?   @map("DS_BAN") @db.VarChar(50)
+  database_name        String?   @map("NM_BAN") @db.VarChar(50)
+  database_type        String?   @map("TP_BAN") @db.VarChar(20)
+  server_name          String?   @map("NM_SRV") @db.VarChar(50)
+  host                 String?   @map("NM_HST") @db.VarChar(50)
+  port                 Int?      @map("NR_PRT")
+  database_user        String?   @map("NM_USU") @db.VarChar(50)
+  database_password    String?   @map("NM_SNH") @db.VarChar(100)
+  database_colection   String?   @map("DB_COL") @db.VarChar(50)
+  // NR_ROL     String?   @db.VarChar(50)
+  created_at           DateTime? @map("DH_CAD") @db.Timestamp()
+  observation          String?   @map("TX_OBS") @db.VarChar(255)
+  routines             Int?      @map("NR_QTD_RTN")
+  retentions           Int?      @map("NR_QTD_RET")
+  status               String?   @map("TF_ATV") @db.VarChar(1)
+  id_project           String?    @map("TX_SCP")
+
+  //FK
+  BD_ROTINAS database_routines[]
+
+  fk_cd_usu_cad user?   @relation(fields: [id_user], references: [id_user])
+  fk_id_project project? @relation(fields: [id_project], references: [id_project])
+
+  @@map("BANCO_DADOS")
+}
+
+model database_notification {
+  id_notification String    @unique @map("CD_NOT")
+  id_user         String   @map("CD_USU")
+  name            String?   @map("NM_PES") @db.VarChar(50)
+  email           String?   @map("TX_EML") @db.VarChar(100)
+  subject         String?   @map("NM_ASS") @db.VarChar(50)
+  type            NotificationType?   @map("TP_SIT_AVS")
+  created_at      DateTime? @map("DH_CAD") @db.Timestamp()
+
+
+  //fk
+  avisos_enviados notifications_sent[]
+  fk_cd_usu_cad user?    @relation(fields: [id_user], references: [id_user])
+
+  @@id([id_notification, id_user])
+  @@map("BANCO_DADOS_AVISOS")
+}
+
+model database_routines {
+  id_database    String    @map("CD_BAN")
+  id_routine     String    @unique @map("CD_RTN") @db.VarChar(100)
+  execution_time DateTime? @map("DH_RTN") @db.Timestamp()
+  observation    String?   @map("TX_OBS") @db.VarChar(255)
+  created_at     DateTime? @map("DH_CAD") @db.Timestamp()
+  id_user        String?   @map("CD_USU")
+  active         Boolean   @default(true) @map("CD_ATV")
+
+  //FK
+  rotinas_executadas executed_routines[]
+
+  fk_cd_ban     database @relation(fields: [id_database], references: [id_database])
+  fk_cd_usu_cad user?    @relation(fields: [id_user], references: [id_user])
+
+  @@id([id_database, id_routine])
+  @@map("BANCO_DADOS_ROTINAS")
+}
+
+model executed_routines {
+  id_routine          String    @map("CD_RTN") @db.VarChar(100)
+  id_executed_routine String    @unique @default(uuid()) @map("CD_EXE_RTN")
+  time_to_start       DateTime? @map("DH_PRV") @db.Timestamp()
+  start_routine       DateTime? @map("DH_INI_RTN") @db.Timestamp()
+  end_routine         DateTime? @map("DH_FIN_RTN") @db.Timestamp()
+  start_backup        DateTime? @map("DH_INI_BKP") @db.Timestamp()
+  end_backup          DateTime? @map("DH_FIN_BKP") @db.Timestamp()
+  start_compression   DateTime? @map("DH_INI_CMP") @db.Timestamp()
+  end_compression     DateTime? @map("DH_FIN_CMP") @db.Timestamp()
+  start_send_cloud    DateTime? @map("DH_INI_NUV") @db.Timestamp()
+  end_send_cloud      DateTime? @map("DH_FIN_NUV") @db.Timestamp()
+  situation           String?   @map("TP_SIT") @db.VarChar(1)
+  file_size           Int?      @map("NR_TAM_ARQ")
+  deleted             Boolean?  @map("TF_EXC_ARQ")
+  file_name           String?   @map("NM_ARQ") @db.VarChar(100)
+  observation         String?   @map("TX_OBS") @db.VarChar(1000)
+  bucket_key          String?   @map("TX_BKT")
+  created_at          DateTime? @map("DH_CAD")
+
+  //fk
+  avisos_enviados notifications_sent[]
+
+  fk_bd_rotinas database_routines @relation(fields: [id_routine], references: [id_routine])
+
+  @@id([id_routine, id_executed_routine])
+  @@map("ROTINAS_EXECUTADAS")
+}
+
+model notifications_sent {
+  id_executed_routine String    @map("id_RTN") @db.VarChar(100)
+  id_notification     String    @map("CD_EML")
+  email               String?   @map("TX_EML") @db.VarChar(100)
+  sent_at             DateTime? @map("DH_ENV") @db.Timestamp()
+
+  //fk
+  fk_rotina_executada   executed_routines?     @relation(fields: [id_executed_routine], references: [id_executed_routine])
+  fk_banco_dados_avisos database_notification? @relation(fields: [id_notification], references: [id_notification])
+
+  @@id([id_executed_routine, id_notification])
+  @@map("AVISOS_ENVIADOS")
+}
