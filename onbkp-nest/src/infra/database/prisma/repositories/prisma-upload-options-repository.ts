@@ -40,4 +40,14 @@ export class PrismaUploadOptionsRepository implements IUploadOptionsRepository {
 
     return UploadOptionsMapper.toDomain(res);
   }
+
+  async findByUserId(id_user: string): Promise<UploadOptions[] | null> {
+    const res = await this.prisma.upload_options.findMany({
+      where: {
+        id_user,
+      },
+    });
+
+    return res.map(UploadOptionsMapper.toDomain);
+  }
 }

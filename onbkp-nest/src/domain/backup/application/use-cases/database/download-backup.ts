@@ -36,7 +36,7 @@ export class DownloadBackupUseCase {
       return left(new InvalidOperationError('File was deleted'));
     }
 
-    const uploader = this.uploader.getService(UploadType.s3);
+    const uploader = this.uploader.getService(UploadType.local);
 
     try {
       const file = await uploader.fetch(res.file_name);

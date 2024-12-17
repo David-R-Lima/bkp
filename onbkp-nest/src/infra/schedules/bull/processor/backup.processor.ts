@@ -14,6 +14,7 @@ import { DatabaseType } from 'src/domain/backup/enums/databaseType';
 import { NotificationType } from 'src/domain/backup/enterprise/entities/database-notification';
 import { UploaderServiceFactory } from 'src/domain/backup/application/storage/uploader-factory';
 import { UploadType } from 'src/domain/backup/enterprise/entities/upload-options';
+import { IUploadOptionsRepository } from 'src/domain/backup/enterprise/repositories/upload-options-repository';
 
 @Processor('backup')
 export class BackupProcessor {
@@ -23,6 +24,7 @@ export class BackupProcessor {
     private executedRoutinesRepository: IExecutedRoutinesRepository,
     private databaseRoutinesRepository: IDatabaseRoutineRepository,
     private backupFactoryImpl: BackupFactoryImpl,
+    private uploadOptionsRespository: IUploadOptionsRepository,
     @InjectQueue('notifications') protected notificationQueue: Queue,
   ) {}
   @Process('schedule-backup')
@@ -32,6 +34,10 @@ export class BackupProcessor {
     if (!res) {
       return left(new ResourceNotFoundError('Database not found'));
     }
+
+    const uploadOptions = await this.uploadOptionsRespository.findByUserId(
+      res.id_user.toString(),
+    );
 
     const routineExists = await this.databaseRoutinesRepository.findById(
       data.id_database,
@@ -47,7 +53,11 @@ export class BackupProcessor {
         data.id_database,
       );
 
-    const uploader = this.uploader.getService(UploadType.s3);
+    let uploader = this.uploader.getService(UploadType.local);
+
+    if (uploadOptions && uploadOptions.length > 0) {
+      uploader = this.uploader.getService(uploadOptions[0].uploadType);
+    }
 
     if (executedRoutines.length >= res.retentions) {
       const temp = executedRoutines[executedRoutines.length - 1];
