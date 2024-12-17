@@ -1,6 +1,6 @@
 "use client"
 import { open } from "fs";
-import { Home, Database, Send } from "lucide-react";
+import { Home, Database, Send, Save } from "lucide-react";
 import Link from "next/link"
 import { usePathname } from "next/navigation";
 
@@ -32,6 +32,15 @@ export function SideBar({open}: Props) {
                         Avisos
                     </Link>
                 </div>
+                <div>
+                    <Link
+                        href={"/dashboard/upload"} 
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 ${path[2]  === "upload" ? "text-primary text-lg" : "text-muted-foreground transition-all hover:text-primary"}`}
+                    >
+                        <Save className="h-6 w-6" /> 
+                        Upload
+                    </Link>
+                </div>
             </div>
         )
     }
@@ -60,6 +69,14 @@ export function SideBar({open}: Props) {
                     className={`flex items-center gap-3 rounded-lg px-3 py-2 ${path[2]  === "avisos" ? "text-primary text-lg" : "text-muted-foreground transition-all hover:text-primary"}`}
                 >
                     <Send className="h-6 w-6" /> 
+                </Link>
+            </div>
+            <div>
+                <Link 
+                    href={"/dashboard/upload"} 
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2 ${path[2]  === "upload" ? "text-primary text-lg" : "text-muted-foreground transition-all hover:text-primary"}`}
+                >
+                    <Save className="h-6 w-6" /> 
                 </Link>
             </div>
         </div>
