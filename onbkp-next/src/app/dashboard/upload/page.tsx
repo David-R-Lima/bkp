@@ -11,9 +11,21 @@ import {
   } from "@/components/ui/card"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { createUploadOptions } from "@/services/upload-options";
+import { UploadType } from "@/services/upload-options/types";
+import { toast } from "sonner";
 
 export default function UploadComponent() {
-    const [uploadOptions, setUploadOptions] = useState("")
+    const [uploadType, setUploadOptions] = useState<UploadType | undefined>()
+
+    const createUploadOptionsMutation = useMutation({
+        mutationKey: ['create-upload-options'],
+        mutationFn: createUploadOptions,
+        onSuccess: () => {
+            toast.success("Configurações do upload salvas com sucesso!")
+        }
+    })
 
     return (
         <div className="space-y-4">
@@ -23,7 +35,7 @@ export default function UploadComponent() {
                     <CardDescription>Mude as configurações de upload de arquivo ao realizar um backup.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col space-y-4">
-                <Select onValueChange={(e) => {
+                <Select onValueChange={(e: UploadType) => {
                             setUploadOptions(e)
                           }}>
                             <SelectTrigger className="w-[180px]">
@@ -40,7 +52,14 @@ export default function UploadComponent() {
                 </CardContent>
                 <CardFooter>
                           <div>
-                            <Button>Salvar</Button>
+                            <Button onClick={() => {
+                                if(!uploadType) {
+                                    toast.error("Selecione um tipo de upload")
+                                    return
+                                }
+
+                                createUploadOptionsMutation.mutate({ uploadType })
+                            }}>Salvar</Button>
                           </div>
                 </CardFooter>
             </Card>

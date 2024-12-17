@@ -18,10 +18,13 @@ export class CreateUploadOption {
   ) {}
 
   async execute(data: Request) {
-    const uploadOption = UploadOptions.create({
-      uploadType: data.uploadType,
-      id_user: new UniqueEntityID(data.userId),
-    });
+    const uploadOption = UploadOptions.create(
+      {
+        uploadType: data.uploadType,
+        id_user: new UniqueEntityID(data.userId),
+      },
+      new UniqueEntityID(),
+    );
 
     await this.uploadOptionsRepository.create(uploadOption);
   }

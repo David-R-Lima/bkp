@@ -196,7 +196,7 @@ enum UploadType {
 }
 
 model upload_options {
-  id         Int        @id @unique @default(autoincrement())
+  id         String    @id @map("id") @db.VarChar(100)
   uploadType UploadType
   id_user    String
   user       user       @relation(fields: [id_user], references: [id_user])

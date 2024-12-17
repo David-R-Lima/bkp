@@ -21,7 +21,7 @@ export class PrismaUploadOptionsRepository implements IUploadOptionsRepository {
   async findById(id: string): Promise<UploadOptions | null> {
     const res = await this.prisma.upload_options.findUnique({
       where: {
-        id: Number(id),
+        id,
       },
     });
 
@@ -33,7 +33,7 @@ export class PrismaUploadOptionsRepository implements IUploadOptionsRepository {
 
     const res = await this.prisma.upload_options.update({
       where: {
-        id: Number(upload_options.id.toString()),
+        id: upload_options.id.toString(),
       },
       data,
     });

@@ -19,7 +19,7 @@ export class UploadOptionsMapper {
     uploadOptions: UploadOptions,
   ): Prisma.upload_optionsUncheckedCreateInput {
     return {
-      id: Number(uploadOptions.id.toString()),
+      id: uploadOptions.id.toString(),
       uploadType: uploadOptions.uploadType,
       id_user: uploadOptions.id_user.toString(),
     };
