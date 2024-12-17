@@ -72,4 +72,33 @@ export class PrismaDatabaseNotifications
       DatabaseNotificationMapper.toDomain(notification),
     );
   }
+
+  async delete(id_notification: string): Promise<void> {
+    await this.prisma.database_notification.delete({
+      where: {
+        id_notification,
+      },
+    });
+  }
+
+  async findNotificationsByUserEmail({
+    email,
+    notificationTypes,
+  }): Promise<DatabaseNotification[] | null> {
+    const res = await this.prisma.database_notification.findMany({
+      where: {
+        email,
+        ...(notificationTypes &&
+          notificationTypes.length > 0 && {
+            type: {
+              in: notificationTypes,
+            },
+          }),
+      },
+    });
+
+    return res.map((notification) =>
+      DatabaseNotificationMapper.toDomain(notification),
+    );
+  }
 }

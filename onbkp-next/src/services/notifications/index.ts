@@ -16,3 +16,7 @@ export async function listNotifications() {
     const { data } = await api.get<{notifications: Notifications[]}>('/notifications');
     return data
 }
+
+export async function deleteNotification(id_notification: string) {
+    await api.delete('/notifications/' + id_notification);
+}

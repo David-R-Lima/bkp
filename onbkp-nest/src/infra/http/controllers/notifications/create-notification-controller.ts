@@ -7,8 +7,8 @@ import { NotificationType } from 'src/domain/backup/enterprise/entities/database
 import { CreateNotification } from 'src/domain/backup/application/use-cases/notifications/create-notification';
 
 const schema = z.object({
-  email: z.string(),
-  event: z.nativeEnum(NotificationType),
+  email: z.string().email(),
+  event: z.array(z.nativeEnum(NotificationType)),
 });
 
 type Schema = z.infer<typeof schema>;
@@ -20,12 +20,14 @@ export class CreateNotificationController {
 
   @Post()
   async handle(@Body(pipe) body: Schema, @CurrentUser() user: UserPayload) {
-    const request = body;
+    const { email, event } = body;
 
     await this.createNotification.execute({
-      email: request.email,
-      event: request.event,
+      email,
+      event,
       userId: user.sub,
     });
+
+    return { message: 'Notifications processed successfully' };
   }
 }

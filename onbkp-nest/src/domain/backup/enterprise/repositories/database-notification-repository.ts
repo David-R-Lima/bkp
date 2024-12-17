@@ -8,6 +8,11 @@ interface FindNotificationsByUserId {
   notificationTypes?: NotificationType[];
 }
 
+interface FindNotificationsByUserEmail {
+  email: string;
+  notificationTypes?: NotificationType[];
+}
+
 export abstract class IDatabaseNotificationRepository {
   abstract create(
     database_notification: DatabaseNotification,
@@ -21,4 +26,8 @@ export abstract class IDatabaseNotificationRepository {
   abstract findNotificationsByUserId(
     data: FindNotificationsByUserId,
   ): Promise<DatabaseNotification[] | null>;
+  abstract findNotificationsByUserEmail(
+    data: FindNotificationsByUserEmail,
+  ): Promise<DatabaseNotification[] | null>;
+  abstract delete(id_notification: string): Promise<void>;
 }

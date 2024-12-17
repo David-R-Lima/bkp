@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button"
 import { useRef, useState } from "react"
 import { NotificationEvents } from "./events"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { createNotification, listNotifications } from "@/services/notifications"
+import { createNotification, listNotifications, deleteNotification } from "@/services/notifications"
 import { toast } from "sonner"
 import dayjs from "dayjs"
 
@@ -27,6 +27,15 @@ export function Aviso() {
         mutationFn: createNotification,
         onSuccess: () => {
             toast.success("Notificação criada com sucesso!")
+            notifications.refetch()
+        }
+    })
+
+    const deleteNotificationMutation = useMutation({
+        mutationKey: ['delete-notification'],
+        mutationFn: deleteNotification,
+        onSuccess: () => {
+            toast.success("Notificação deletada com sucesso!")
             notifications.refetch()
         }
     })
@@ -80,7 +89,7 @@ export function Aviso() {
 
                              createNotificationMutation.mutate({
                                 email,
-                                event: events[0].value,
+                                event: events.map((event: {label: string, value: string}) => event.value),
                             })
                         }}>Salvar</Button>
                     </div>
@@ -99,6 +108,9 @@ export function Aviso() {
                             <div className="flex space-x-2 mt-2">
                                 <Button>Editar</Button>
                                 <Button>Ver logs</Button>
+                                <Button variant={'destructive'} onClick={() => {
+                                    deleteNotificationMutation.mutate(notification.id_notification)
+                                }}>Deletar</Button>
                             </div>
                         </div>
                         <div className="flex items-center space-x-2">            

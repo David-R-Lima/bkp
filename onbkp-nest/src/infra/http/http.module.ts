@@ -37,6 +37,8 @@ import { CreateNotification } from 'src/domain/backup/application/use-cases/noti
 import { CreateNotificationController } from './controllers/notifications/create-notification-controller';
 import { ListNotifications } from 'src/domain/backup/application/use-cases/notifications/get-notifications';
 import { ListNotificationController } from './controllers/notifications/get-notifications-controller';
+import { DeleteNotification } from 'src/domain/backup/application/use-cases/notifications/delete-notifications';
+import { DeleteNotificationController } from './controllers/notifications/delete-notification-controller';
 @Module({
   imports: [
     StorageModule,
@@ -63,6 +65,7 @@ import { ListNotificationController } from './controllers/notifications/get-noti
     CreateLoginCodeController,
     CreateNotificationController,
     ListNotificationController,
+    DeleteNotificationController,
   ],
   providers: [
     CreateUserUseCase,
@@ -81,6 +84,7 @@ import { ListNotificationController } from './controllers/notifications/get-noti
     CreateLoginCodeUseCase,
     CreateNotification,
     ListNotifications,
+    DeleteNotification,
   ],
 })
 export class HttpModule {}
