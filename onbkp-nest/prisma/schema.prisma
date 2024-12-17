@@ -61,24 +61,25 @@ model user {
   recovery_code Int?      @map("CD_TRC_SNH")
   status        Boolean?  @map("TF_ATV")
   created_at    DateTime? @map("DH_CAD") @db.Timestamp()
-  user_type     UserType?   @map("TP_USU")
-  session_id         String?   @map("TX_TKN")
-  login_code    Int? @map("CD_LGN")
+  user_type     UserType? @map("TP_USU")
+  session_id    String?   @map("TX_TKN")
+  login_code    Int?      @map("CD_LGN")
   //FK
 
-  BD         database[]
-  BD_AVISOS  database_notification[]
-  BD_ROTINAS database_routines[]
+  BD            database[]
+  BD_AVISOS     database_notification[]
+  BD_ROTINAS    database_routines[]
+  UPCOES_UPLOAD upload_options[]
 
   @@map("USUARIOS")
 }
 
 model project {
-  id_project   String     @id @map("CD_PRO")
-  id_user      String     @map("CD_USU")
-  project_name String     @map("TX_PRO")
-  
-  database     database[]
+  id_project   String @id @map("CD_PRO")
+  id_user      String @map("CD_USU")
+  project_name String @map("TX_PRO")
+
+  database database[]
 }
 
 model database {
@@ -99,30 +100,29 @@ model database {
   routines             Int?      @map("NR_QTD_RTN")
   retentions           Int?      @map("NR_QTD_RET")
   status               String?   @map("TF_ATV") @db.VarChar(1)
-  id_project           String?    @map("TX_SCP")
+  id_project           String?   @map("TX_SCP")
 
   //FK
   BD_ROTINAS database_routines[]
 
-  fk_cd_usu_cad user?   @relation(fields: [id_user], references: [id_user])
+  fk_cd_usu_cad user?    @relation(fields: [id_user], references: [id_user])
   fk_id_project project? @relation(fields: [id_project], references: [id_project])
 
   @@map("BANCO_DADOS")
 }
 
 model database_notification {
-  id_notification String    @unique @map("CD_NOT")
-  id_user         String   @map("CD_USU")
-  name            String?   @map("NM_PES") @db.VarChar(50)
-  email           String?   @map("TX_EML") @db.VarChar(100)
-  subject         String?   @map("NM_ASS") @db.VarChar(50)
-  type            NotificationType?   @map("TP_SIT_AVS")
-  created_at      DateTime? @map("DH_CAD") @db.Timestamp()
-
+  id_notification String            @unique @map("CD_NOT")
+  id_user         String            @map("CD_USU")
+  name            String?           @map("NM_PES") @db.VarChar(50)
+  email           String?           @map("TX_EML") @db.VarChar(100)
+  subject         String?           @map("NM_ASS") @db.VarChar(50)
+  type            NotificationType? @map("TP_SIT_AVS")
+  created_at      DateTime?         @map("DH_CAD") @db.Timestamp()
 
   //fk
   avisos_enviados notifications_sent[]
-  fk_cd_usu_cad user?    @relation(fields: [id_user], references: [id_user])
+  fk_cd_usu_cad   user?                @relation(fields: [id_user], references: [id_user])
 
   @@id([id_notification, id_user])
   @@map("BANCO_DADOS_AVISOS")
@@ -188,4 +188,18 @@ model notifications_sent {
 
   @@id([id_executed_routine, id_notification])
   @@map("AVISOS_ENVIADOS")
+}
+
+enum UploadType {
+  s3
+  local
+}
+
+model upload_options {
+  id         Int        @id @unique @default(autoincrement())
+  uploadType UploadType
+  id_user    String
+  user       user       @relation(fields: [id_user], references: [id_user])
+
+  @@map("OPCOES_UPLOAD")
 }

@@ -12,6 +12,8 @@ import { IExecutedRoutinesRepository } from 'src/domain/backup/enterprise/reposi
 import { PrismaExecutedRoutinesRepository } from './repositories/prisma-executed-routines-repository';
 import { INotificationSentRepository } from 'src/domain/backup/enterprise/repositories/notification-sent-repository';
 import { PrismaNotificationSentRepository } from './repositories/prisma-notification-sent-repository';
+import { IUploadOptionsRepository } from 'src/domain/backup/enterprise/repositories/upload-options-repository';
+import { PrismaUploadOptionsRepository } from './repositories/prisma-upload-options-repository';
 
 @Module({
   providers: [
@@ -40,6 +42,10 @@ import { PrismaNotificationSentRepository } from './repositories/prisma-notifica
       provide: INotificationSentRepository,
       useClass: PrismaNotificationSentRepository,
     },
+    {
+      provide: IUploadOptionsRepository,
+      useClass: PrismaUploadOptionsRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -66,6 +72,10 @@ import { PrismaNotificationSentRepository } from './repositories/prisma-notifica
     {
       provide: INotificationSentRepository,
       useClass: PrismaNotificationSentRepository,
+    },
+    {
+      provide: IUploadOptionsRepository,
+      useClass: PrismaUploadOptionsRepository,
     },
   ],
 })

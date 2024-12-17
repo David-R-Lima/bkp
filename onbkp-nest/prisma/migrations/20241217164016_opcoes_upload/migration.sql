@@ -1,0 +1,17 @@
+-- CreateEnum
+CREATE TYPE "UploadType" AS ENUM ('s3', 'local');
+
+-- CreateTable
+CREATE TABLE "OPCOES_UPLOAD" (
+    "id" SERIAL NOT NULL,
+    "uploadType" "UploadType" NOT NULL,
+    "id_user" TEXT NOT NULL,
+
+    CONSTRAINT "OPCOES_UPLOAD_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "OPCOES_UPLOAD_id_key" ON "OPCOES_UPLOAD"("id");
+
+-- AddForeignKey
+ALTER TABLE "OPCOES_UPLOAD" ADD CONSTRAINT "OPCOES_UPLOAD_id_user_fkey" FOREIGN KEY ("id_user") REFERENCES "USUARIOS"("CD_USU") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -5,7 +5,7 @@ import {
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
-import { EnvService } from '../env/env.service';
+import { EnvService } from '../../env/env.service';
 import {
   UploadParams,
   Uploader,

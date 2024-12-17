@@ -4,8 +4,9 @@ import { InternalServerError } from 'src/core/errors/internal-server-error';
 import { ResourceAlreadyExistsError } from 'src/core/errors/resource-already-exists-error';
 import { ResourceNotFoundError } from 'src/core/errors/resource-not-found-error';
 import { IExecutedRoutinesRepository } from 'src/domain/backup/enterprise/repositories/executed-routine-repository';
-import { Uploader } from '../../storage/uploader';
 import { InvalidOperationError } from 'src/core/errors/invalid-operation-error';
+import { UploaderServiceFactory } from '../../storage/uploader-factory';
+import { UploadType } from 'src/domain/backup/enterprise/entities/upload-options';
 
 type DownloadBackupResponse = Either<
   ResourceAlreadyExistsError | InternalServerError | InvalidOperationError,
@@ -16,7 +17,7 @@ type DownloadBackupResponse = Either<
 export class DownloadBackupUseCase {
   constructor(
     private readonly executedRoutineRepository: IExecutedRoutinesRepository,
-    private readonly s3: Uploader,
+    private uploader: UploaderServiceFactory,
   ) {}
   async execute(
     id_routine: string,
@@ -35,8 +36,10 @@ export class DownloadBackupUseCase {
       return left(new InvalidOperationError('File was deleted'));
     }
 
+    const uploader = this.uploader.getService(UploadType.s3);
+
     try {
-      const file = await this.s3.fetch(res.file_name);
+      const file = await uploader.fetch(res.file_name);
 
       const fileBuffer = Buffer.from(file);
 

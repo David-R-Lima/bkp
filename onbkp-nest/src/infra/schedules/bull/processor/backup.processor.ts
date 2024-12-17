@@ -9,15 +9,16 @@ import { ExecutedRoutines } from 'src/domain/backup/enterprise/entities/executed
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id';
 import { createGzip } from 'zlib';
 import * as fs from 'node:fs';
-import { Uploader } from 'src/domain/backup/application/storage/uploader';
 import { IDatabaseRoutineRepository } from 'src/domain/backup/enterprise/repositories/database-routines-repository';
 import { DatabaseType } from 'src/domain/backup/enums/databaseType';
 import { NotificationType } from 'src/domain/backup/enterprise/entities/database-notification';
+import { UploaderServiceFactory } from 'src/domain/backup/application/storage/uploader-factory';
+import { UploadType } from 'src/domain/backup/enterprise/entities/upload-options';
 
 @Processor('backup')
 export class BackupProcessor {
   constructor(
-    private s3: Uploader,
+    private uploader: UploaderServiceFactory,
     private databaseRepository: IDatabaseRepository,
     private executedRoutinesRepository: IExecutedRoutinesRepository,
     private databaseRoutinesRepository: IDatabaseRoutineRepository,
@@ -46,6 +47,8 @@ export class BackupProcessor {
         data.id_database,
       );
 
+    const uploader = this.uploader.getService(UploadType.s3);
+
     if (executedRoutines.length >= res.retentions) {
       const temp = executedRoutines[executedRoutines.length - 1];
       temp.deleted = true;
@@ -53,7 +56,7 @@ export class BackupProcessor {
 
       try {
         if (temp.file_name) {
-          await this.s3.delete(temp.file_name);
+          await uploader.delete(temp.file_name);
 
           temp.file_name = null;
 
@@ -136,7 +139,7 @@ export class BackupProcessor {
     executed_routine.start_send_cloud = new Date();
 
     try {
-      await this.s3.upload({
+      await uploader.upload({
         file: buffer,
         fileName: fileName,
         fileType: 'gz',

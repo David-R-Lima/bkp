@@ -1,16 +1,9 @@
 import { Module } from '@nestjs/common';
-import { S3Storage } from './s3-storage';
-import { EnvModule } from 'src/infra/env/env.module';
-import { Uploader } from 'src/domain/backup/application/storage/uploader';
+import { LocalModule } from './local/local.module';
+import { S3Module } from './s3/s3.module';
 
 @Module({
-  imports: [EnvModule],
-  providers: [
-    {
-      provide: Uploader,
-      useClass: S3Storage,
-    },
-  ],
-  exports: [Uploader],
+  imports: [LocalModule, S3Module],
+  exports: [LocalModule, S3Module],
 })
 export class StorageModule {}
