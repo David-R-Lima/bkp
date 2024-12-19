@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
     Card,
@@ -11,8 +11,8 @@ import {
   } from "@/components/ui/card"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
-import { createUploadOptions } from "@/services/upload-options";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createUploadOptions, getUploadOptions } from "@/services/upload-options";
 import { UploadType } from "@/services/upload-options/types";
 import { toast } from "sonner";
 
@@ -27,6 +27,19 @@ export default function UploadComponent() {
         }
     })
 
+    const uploadOptionsQuery = useQuery({
+      queryKey: ['upload-options'],
+      queryFn: getUploadOptions,
+    })
+
+    useEffect(() => {
+      if(uploadOptionsQuery.data) {
+        setUploadOptions(uploadOptionsQuery.data.uploadOptions.upload_type)
+      }
+    }, [uploadOptionsQuery.data])
+
+
+
     return (
         <div className="space-y-4">
                         <Card>
@@ -35,7 +48,7 @@ export default function UploadComponent() {
                     <CardDescription>Mude as configurações de upload de arquivo ao realizar um backup.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col space-y-4">
-                <Select onValueChange={(e: UploadType) => {
+                <Select value={uploadType} onValueChange={(e: UploadType) => {
                             setUploadOptions(e)
                           }}>
                             <SelectTrigger className="w-[180px]">

@@ -3,3 +3,8 @@ export enum UploadType {
     local = 'local',
   }
   
+export interface UploadOptions {
+  upload_type: UploadType;
+  id_upload_options: string
+  id_user: string;
+}

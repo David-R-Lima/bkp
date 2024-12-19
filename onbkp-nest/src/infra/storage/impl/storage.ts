@@ -13,7 +13,18 @@ export class UploaderFactoryImpl {
       case UploadType.local:
         return new LocalStorage();
       case UploadType.s3:
-        return new S3Storage(this.env);
+        if (
+          !this.env.get('AWS_ACCESS_KEY_ID') ||
+          !this.env.get('AWS_BUCKET_ENDPOINT') ||
+          !this.env.get('AWS_BUCKET_NAME') ||
+          !this.env.get('AWS_SECRET_ACCESS_KEY_ID')
+        ) {
+          throw new Error(
+            'Missing required environment variables for S3 storage',
+          );
+        } else {
+          return new S3Storage(this.env);
+        }
       default:
         throw new Error('Invalid upload type');
     }

@@ -4,6 +4,7 @@ import {
 } from '@prisma/client';
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id';
 import { ExecutedRoutines } from 'src/domain/backup/enterprise/entities/executed-routines';
+import { UploadType } from 'src/domain/backup/enterprise/entities/upload-options';
 
 export class ExecutedRoutinesMapper {
   static toDomain(executedRoutines: PrismaExecutedRoutines) {
@@ -26,6 +27,7 @@ export class ExecutedRoutinesMapper {
         observation: executedRoutines.observation,
         bucket_key: executedRoutines.bucket_key,
         created_at: executedRoutines.created_at,
+        uploadType: executedRoutines.uploadType as UploadType,
       },
       new UniqueEntityID(executedRoutines.id_executed_routine),
     );
@@ -52,6 +54,7 @@ export class ExecutedRoutinesMapper {
       observation: executedRoutines.observation,
       bucket_key: executedRoutines.bucket_key,
       created_at: executedRoutines.created_at,
+      uploadType: executedRoutines.uploadType,
     };
   }
 }

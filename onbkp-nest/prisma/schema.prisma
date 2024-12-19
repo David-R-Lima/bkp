@@ -166,6 +166,7 @@ model executed_routines {
   observation         String?   @map("TX_OBS") @db.VarChar(1000)
   bucket_key          String?   @map("TX_BKT")
   created_at          DateTime? @map("DH_CAD")
+  uploadType      UploadType? @map("TP_UPL")
 
   //fk
   avisos_enviados notifications_sent[]

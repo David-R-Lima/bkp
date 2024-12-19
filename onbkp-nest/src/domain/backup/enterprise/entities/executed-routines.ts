@@ -17,6 +17,7 @@
 
 import { Entity } from 'src/core/entities/entity';
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id';
+import { UploadType } from './upload-options';
 
 export interface ExecutedRoutinesProps {
   id_routine: UniqueEntityID;
@@ -36,6 +37,7 @@ export interface ExecutedRoutinesProps {
   observation?: string;
   bucket_key?: string;
   created_at: Date;
+  uploadType?: UploadType;
 }
 export class ExecutedRoutines extends Entity<ExecutedRoutinesProps> {
   get id_routine() {
@@ -171,6 +173,14 @@ export class ExecutedRoutines extends Entity<ExecutedRoutinesProps> {
 
   set created_at(value: Date) {
     this.props.created_at = value;
+  }
+
+  get uploadType() {
+    return this.props.uploadType;
+  }
+
+  set uploadType(value: UploadType) {
+    this.props.uploadType = value;
   }
 
   static create(props: ExecutedRoutinesProps, id?: UniqueEntityID) {

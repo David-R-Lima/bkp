@@ -13,8 +13,8 @@ import { IDatabaseRoutineRepository } from 'src/domain/backup/enterprise/reposit
 import { DatabaseType } from 'src/domain/backup/enums/databaseType';
 import { NotificationType } from 'src/domain/backup/enterprise/entities/database-notification';
 import { UploaderServiceFactory } from 'src/domain/backup/application/storage/uploader-factory';
-import { UploadType } from 'src/domain/backup/enterprise/entities/upload-options';
 import { IUploadOptionsRepository } from 'src/domain/backup/enterprise/repositories/upload-options-repository';
+import { UploadType } from 'src/domain/backup/enterprise/entities/upload-options';
 
 @Processor('backup')
 export class BackupProcessor {
@@ -53,10 +53,19 @@ export class BackupProcessor {
         data.id_database,
       );
 
-    let uploader = this.uploader.getService(UploadType.local);
+    let currentUploadType = UploadType.local;
+
+    let uploader = this.uploader.getService(currentUploadType);
 
     if (uploadOptions && uploadOptions.length > 0) {
-      uploader = this.uploader.getService(uploadOptions[0].uploadType);
+      try {
+        uploader = this.uploader.getService(uploadOptions[0].uploadType);
+      } catch (error) {
+        console.log('error: ', error);
+        return left(new Error('Invalid upload type'));
+      }
+
+      currentUploadType = uploadOptions[0].uploadType;
     }
 
     if (executedRoutines.length >= res.retentions) {
@@ -86,6 +95,7 @@ export class BackupProcessor {
         time_to_start: new Date(),
         created_at: new Date(),
         deleted: false,
+        uploadType: currentUploadType,
       },
       new UniqueEntityID(),
     );

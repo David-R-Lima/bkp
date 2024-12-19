@@ -2,10 +2,10 @@ import { z } from 'zod';
 
 export const envSchema = z.object({
   NODE_ENV: z.enum(['dev', 'production', 'test']).default('dev'),
-  AWS_BUCKET_NAME: z.string(),
-  AWS_BUCKET_ENDPOINT: z.string(),
-  AWS_ACCESS_KEY_ID: z.string(),
-  AWS_SECRET_ACCESS_KEY_ID: z.string(),
+  AWS_BUCKET_NAME: z.string().optional().nullable(),
+  AWS_BUCKET_ENDPOINT: z.string().optional().nullable(),
+  AWS_ACCESS_KEY_ID: z.string().optional().nullable(),
+  AWS_SECRET_ACCESS_KEY_ID: z.string().optional().nullable(),
   MAIL_HOST: z.string(),
   MAIL_SECURE: z.string(),
   MAIL_PORT: z.coerce.number(),

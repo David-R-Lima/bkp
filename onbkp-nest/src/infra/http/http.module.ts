@@ -41,6 +41,8 @@ import { DeleteNotification } from 'src/domain/backup/application/use-cases/noti
 import { DeleteNotificationController } from './controllers/notifications/delete-notification-controller';
 import { CreateUploadOption } from 'src/domain/backup/application/use-cases/upload-options/create-upload-options';
 import { CreateUploadOptionsController } from './controllers/upload-options/create-upload-options-controller';
+import { GetUploadOptionsController } from './controllers/upload-options/get-user-upload-options-controller';
+import { GetUploadOption } from 'src/domain/backup/application/use-cases/upload-options/get-user-upload-options';
 @Module({
   imports: [
     StorageModule,
@@ -69,6 +71,7 @@ import { CreateUploadOptionsController } from './controllers/upload-options/crea
     ListNotificationController,
     DeleteNotificationController,
     CreateUploadOptionsController,
+    GetUploadOptionsController,
   ],
   providers: [
     CreateUserUseCase,
@@ -89,6 +92,7 @@ import { CreateUploadOptionsController } from './controllers/upload-options/crea
     ListNotifications,
     DeleteNotification,
     CreateUploadOption,
+    GetUploadOption,
   ],
 })
 export class HttpModule {}

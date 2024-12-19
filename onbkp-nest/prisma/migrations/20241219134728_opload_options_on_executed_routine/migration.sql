@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "ROTINAS_EXECUTADAS" ADD COLUMN     "TP_UPL" "UploadType";

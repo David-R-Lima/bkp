@@ -18,14 +18,23 @@ export class CreateUploadOption {
   ) {}
 
   async execute(data: Request) {
-    const uploadOption = UploadOptions.create(
-      {
-        uploadType: data.uploadType,
-        id_user: new UniqueEntityID(data.userId),
-      },
-      new UniqueEntityID(),
-    );
+    const existingUploadOptions =
+      await this.uploadOptionsRepository.findByUserId(data.userId);
 
-    await this.uploadOptionsRepository.create(uploadOption);
+    if (existingUploadOptions.length > 0) {
+      existingUploadOptions[0].uploadType = data.uploadType;
+
+      await this.uploadOptionsRepository.update(existingUploadOptions[0]);
+    } else {
+      const uploadOption = UploadOptions.create(
+        {
+          uploadType: data.uploadType,
+          id_user: new UniqueEntityID(data.userId),
+        },
+        new UniqueEntityID(),
+      );
+
+      await this.uploadOptionsRepository.create(uploadOption);
+    }
   }
 }

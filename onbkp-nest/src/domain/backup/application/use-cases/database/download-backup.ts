@@ -6,7 +6,6 @@ import { ResourceNotFoundError } from 'src/core/errors/resource-not-found-error'
 import { IExecutedRoutinesRepository } from 'src/domain/backup/enterprise/repositories/executed-routine-repository';
 import { InvalidOperationError } from 'src/core/errors/invalid-operation-error';
 import { UploaderServiceFactory } from '../../storage/uploader-factory';
-import { UploadType } from 'src/domain/backup/enterprise/entities/upload-options';
 
 type DownloadBackupResponse = Either<
   ResourceAlreadyExistsError | InternalServerError | InvalidOperationError,
@@ -36,7 +35,14 @@ export class DownloadBackupUseCase {
       return left(new InvalidOperationError('File was deleted'));
     }
 
-    const uploader = this.uploader.getService(UploadType.local);
+    let uploader;
+
+    try {
+      uploader = this.uploader.getService(res.uploadType);
+    } catch (error) {
+      console.log(error);
+      return left(new InvalidOperationError('Invalid upload type'));
+    }
 
     try {
       const file = await uploader.fetch(res.file_name);
