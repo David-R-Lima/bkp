@@ -15,6 +15,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { createUploadOptions, getUploadOptions } from "@/services/upload-options";
 import { UploadType } from "@/services/upload-options/types";
 import { toast } from "sonner";
+import { Info } from "lucide-react";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export default function UploadComponent() {
     const [uploadType, setUploadOptions] = useState<UploadType | undefined>()
@@ -42,40 +44,52 @@ export default function UploadComponent() {
 
     return (
         <div className="space-y-4">
-                        <Card>
-                <CardHeader>
-                    <CardTitle>Upload config</CardTitle>
-                    <CardDescription>Mude as configurações de upload de arquivo ao realizar um backup.</CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col space-y-4">
-                <Select value={uploadType} onValueChange={(e: UploadType) => {
-                            setUploadOptions(e)
-                          }}>
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Tipo do upload" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectLabel>Tipo do upload</SelectLabel>
-                                <SelectItem value="local">Local</SelectItem>
-                                <SelectItem value="s3">S3</SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                </CardContent>
-                <CardFooter>
-                          <div>
-                            <Button onClick={() => {
-                                if(!uploadType) {
-                                    toast.error("Selecione um tipo de upload")
-                                    return
-                                }
+          <Card>
+            <CardHeader>
+                <CardTitle>Upload config</CardTitle>
+                <CardDescription>Mude as configurações de upload de arquivo ao realizar um backup.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-row  items-center space-x-2">
+              <Select value={uploadType} onValueChange={(e: UploadType) => {
+                setUploadOptions(e)
+              }}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Tipo do upload" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Tipo do upload</SelectLabel>
+                    <SelectItem value="local">Local</SelectItem>
+                    <SelectItem value="s3">S3</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <div>
+                <HoverCard openDelay={0}>
+                  <HoverCardTrigger asChild>
+                    <Info size={18} className="hover:cursor-pointer"/>
+                  </HoverCardTrigger>
+                  <HoverCardContent>
+                    <div>
+                      Para usar a opção s3, adicione as variável de ambiente ao iniciar o projeto.
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <div>
+                <Button onClick={() => {
+                    if(!uploadType) {
+                        toast.error("Selecione um tipo de upload")
+                        return
+                    }
 
-                                createUploadOptionsMutation.mutate({ uploadType })
-                            }}>Salvar</Button>
-                          </div>
-                </CardFooter>
-            </Card>
+                    createUploadOptionsMutation.mutate({ uploadType })
+                }}>Salvar</Button>
+              </div>
+            </CardFooter>
+          </Card>
         </div>
     );
 }
