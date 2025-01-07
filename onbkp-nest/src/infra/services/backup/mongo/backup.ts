@@ -5,10 +5,10 @@ import { execute } from '@getvim/execute';
 @Injectable()
 export class MongoBackupService {
   async execute(request: BackupRequest): Promise<boolean> {
-    const { server, database, password, port, user, host, file } = request;
+    const { database, password, port, user, host, file } = request;
     try {
       await execute(
-        `mongodump ${server}://${user}:${password}@${host}:${port}/${database} --out=temp/${file}`,
+        `mongodump --host="${host}:${port}" --username="${user}" --password="${password}" --db="${database}" --authenticationDatabase admin --out=temp/${file}`,
       );
       return true;
     } catch (error) {

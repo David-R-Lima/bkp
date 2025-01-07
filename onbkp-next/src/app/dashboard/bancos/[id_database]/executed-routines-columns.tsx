@@ -13,7 +13,11 @@ import dayjs from 'dayjs'
 import { downloadFile } from '@/services/executed-routines'
 import fileDownload from 'js-file-download'
 
-export const ExecutedRoutinesColumns = (): ColumnDef<ExecutedRoutines>[] => {
+interface Props {
+  databaseType: string
+}
+
+export const ExecutedRoutinesColumns = ({databaseType} : Props): ColumnDef<ExecutedRoutines>[] => {
   const columns: ColumnDef<ExecutedRoutines>[] = [
     {
       accessorKey: 'file_name',
@@ -98,7 +102,20 @@ export const ExecutedRoutinesColumns = (): ColumnDef<ExecutedRoutines>[] => {
               <Button className='w-full' onClick={async () => {
                 const file = await downloadFile(executedRoutine.id_routine, executedRoutine.id_executed_routine)
 
-                fileDownload(file, executedRoutine.file_name + '.gz')
+                switch (databaseType) {
+                  case "MONGO":
+                    fileDownload(file, executedRoutine.file_name + '.bson' + '.gz')
+                    break
+                  case "MYSQL":
+                    fileDownload(file, executedRoutine.file_name + '.sql' + '.gz')
+                    break
+                  case "POSTGRES":
+                    fileDownload(file, executedRoutine.file_name + '.sql' + '.gz')
+                    break
+                  default:
+                    fileDownload(file, executedRoutine.file_name + '.gz')
+                    break
+                }
               }}>Baixar arquivo</Button>
             </PopoverContent>
           </Popover>

@@ -26,8 +26,6 @@ export default function ManageDatabase() {
     const [page, setPage] = useState(0)
     const { id_database } = useParams()
 
-    const columns = ExecutedRoutinesColumns()
-
     const [database, routines, executedRoutines] = useQueries({
         queries: [
             {
@@ -139,8 +137,15 @@ export default function ManageDatabase() {
                 <hr className="my-6"/>
 
                 <h1 className="font-bold text-xl">Backups</h1>
-                <div className="mt-6">
-                    <TableComponent name="" columns={columns} data={executedRoutines.data?.data ?? []} page={page} setPage={setPage}></TableComponent>
-                </div>
+                {
+                    database.data && (
+                        <div className="mt-6">
+                            <TableComponent name="" columns={ExecutedRoutinesColumns({
+                                databaseType: database.data.database_type
+                            })} data={executedRoutines.data?.data ?? []} page={page} setPage={setPage}></TableComponent>
+                        </div>
+                    )
+                }
+
             </div>
 }
